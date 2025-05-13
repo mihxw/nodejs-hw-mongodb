@@ -24,11 +24,7 @@ const contactsSchema = new Schema(
         },
     },
     {
-        //Для автоматичного створення полів createdAt та updatedAt, 
-        // можна використати параметр timestamps: true 
-        // при створенні моделі. 
-        // Це додає до об'єкту два поля: createdAt (дата створення) та updatedAt (дата оновлення), і їх не потрібно додавати вручну.
        timestamps: true, 
     },
 );
-export const ContactsCollection = model('Contact', contactsSchema); // collection name: contacts(зводить до нижнього регістру та у множині)
+export const ContactsCollection = model('Contact', contactsSchema);
