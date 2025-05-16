@@ -1,12 +1,12 @@
 {
   "name": "nodejs-hw-mongodb",
   "version": "1.0.0",
-  "description": "",
   "type": "module",
   "main": "src/index.js",
   "scripts": {
+    "start": "node src/index.js",
     "dev": "nodemon src/index.js"
- },
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mihxw/nodejs-hw-mongodb.git"
