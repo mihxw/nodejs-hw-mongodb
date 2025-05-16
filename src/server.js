@@ -3,7 +3,7 @@ import cors from "cors";
 import pino from "pino-http";
 
 import { getEnvVar } from "./utils/getEnvVar.js";
-import { getContacts, getContactsById } from "./services/contacts.js";
+import { getContacts, getContactsById } from "../src/services/contactsService.js";
 
 // const PORT = getEnvVar("PORT", 3000);
 const PORT = Number(getEnvVar('PORT', 3000));
