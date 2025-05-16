@@ -1,14 +1,14 @@
-import { setupServer } from './server.js';
-import { initMongoConnection } from './db/initMongoConnection.js';
- 
-//фунція bootstrap-фуекція запуску застосунку, яка буде ініціалізувати підключення до бази даних, після чого запускати сервер.
-const bootstrap = async () => {
-    try {
-        await initMongoConnection();
-        await setupServer();
-    } catch (e) {
-        console.error('Error during app bootstrap:', e.message);
-    process.exit(1); // Виходимо з процесу з кодом помилки
-  }
-};
+// Імпортуйте і викличте у ньому функцію setupServer.
+// src/index.
+import dotenv from 'dotenv';
+import "dotenv/config";
+import { initMongoConnection } from "./db/initMongoConnection.js"
+import { setupServer } from "./server.js"
+
+const bootstrap = async() => {
+    await initMongoConnection();
+    setupServer();
+}
 bootstrap();
+
+// У файлі src/index.js викличте функції initMongoConnection. Переконайтеся, що зʼєднання із базою встановлюється до запуску серверу.

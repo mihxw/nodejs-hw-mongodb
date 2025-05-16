@@ -1,21 +1,9 @@
-import { model, Schema } from 'mongoose';
+import ContactCollection from "../db/models/Contact.js";
 
-const contactsSchema = new Schema(
-    {
-        name: { type: String, required: true },
-        phoneNumber: { type: String, required: true },
-        email: { type: String },
-        isFavourite: { type: Boolean, default: false },
-        contactType: {
-            type: String,
-            enum: ['work', 'home', 'personal'],
-            required: true,
-            default: 'personal',
-        },
-    },
-    {
-        timestamps: true,
-    },
-);
+export const getContacts = () => ContactCollection.find();
+// export const getContactsById = () => ContactCollection.findOne({_id:id})
 
-export const Contact = model('Contact', contactsSchema);
+export const getContactsById = async (id) => {
+  const contact = await ContactCollection.findById(id);
+  return contact;
+};

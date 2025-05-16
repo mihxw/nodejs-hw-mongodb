@@ -1,84 +1,59 @@
-import dotenv from 'dotenv';
-dotenv.config();
-import express from 'express';
-import pino from 'pino-http';
-import cors from 'cors';
-import { getEnvVar } from './utils/getEnvVar.js';
-import { getAllContacts, getContactById } from './services/contactsService.js';
+import express from "express";
+import cors from "cors";
+import pino from "pino-http";
 
-// Читаємо змінну оточення PORT
-const PORT = Number(getEnvVar('PORT', '3000'));
+import { getEnvVar } from "./utils/getEnvVar.js";
+import { getContacts, getContactsById } from "./services/contacts.js";
 
-export const setupServer = async () => {
+// const PORT = getEnvVar("PORT", 3000);
+const PORT = Number(getEnvVar('PORT', 3000));
+export const setupServer = () => {
     const app = express();
-    app.use(express.json());
+
     app.use(cors());
-    app.use(
-        //це опція, яка дозволяє визначити, як виводити логи.
-        //target: 'pino-pretty' означає, що Pino не буде виводити JSON-логи (за замовчуванням), а використовуватиме більш читабельний формат для розробки.
-        pino({
-            transport: {
-                target: 'pino-pretty',
-
-            },
-        }),
-    );
-    app.get('/', (req, res) => {
-        res.json({message: "All work" });
+    app.use(express.json())
+    app.use(pino({
+        transport: {
+            target: "pino-pretty"
+        }
+    }));
+    app.get("/contacts", async (req, resp) => {
+        const data = await getContacts();
+        resp.json({
+            status: 200,
+            message: "Contacts are successfully found",
+            data,
+        }); 
     });
-
-        app.get('/contacts', async (req, res) => {
-        try {
-        const contacts = await getAllContacts();
-        res.status(200).json({
- status: 200,
-  message: "Successfully found contacts!",
-  data: contacts,
-        });
-        } catch (error) {
-            console.error(error);
-            }
-        });
-    
-    app.get('/contacts/:contactId', async (req, res, next) => {
-        try {
-            //Властивість params на об'єкті запиту req містить об'єкт динамічних параметрів маршруту, 
-            // де кожне ім'я параметру відповідає властивості у цьому об'єкті, 
-            // а значення, передане у URL, стає значенням цієї властивості. 
-            const { contactId } = req.params;
-        const contact = await getContactById(contactId);
-
-            if (!contact) {
-                res.status(404).json({
-                    message: 'Contact not found'
-                });
-                    return;
-            }
-            
-            res.status(200).json({
-                status: 200,
-                message: `Successfully found contact with id ${contactId}!`,
-                data:
-                    contact,
+    app.get("/contacts/:id", async(req, resp) => {
+        const { id } = req.params;
+        const data = await getContactsById(id);
+        if(!data) {
+            return resp.status(404).json({
+                status: 404,
+                message:`The contact with id =${id} is not found`
             });
-        } catch (error) {
-      console.error(error);
-    }
-    });
-    //Обробку неіснуючих роутів (повертає статус 404 і відповідне повідомлення)
-    app.use((req, res, next) => {
-    res.status(404).json({
-        message: 'Not found',
-    });
+        }
+        resp.json({
+            status:200,
+            message:"The movie is successfully found",
+            data,
+        });
     });
 
-    app.use((err, req, res, next) => {
-        res.status(500).json({
-            message: 'Something went wrong',
-            error: err.message,
+   
+    app.use((req, res) =>{
+        res.status(404).json({
+            message: 'Not found',
+        })
+    });
+
+    app.use((error,req, resp, next) => {
+        resp.status(500).json({
+            message: error.message,
         });
     });
-        app.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}`);
-        });
-};
+    // const port = Number(getEnvVar(PORT));
+
+    app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+}
