@@ -1,14 +1,15 @@
-import { Router } from 'express';
-import { ctrlWrapper } from '../utils/ctrlWrapper.js';
+import express from 'express';
 import {
   getAllContactsController,
-  getContactByIdController,
-} from '../controllers/contacts.js';
+  getContactByIdController
+} from '../controllers/contacts.js'; // Імпортуємо функції контролерів
 
-const router = Router();
+const router = express.Router();
 
-router.get('/contacts', ctrlWrapper(getAllContactsController));
+// Отримати всі контакти
+router.get('/', getAllContactsController);
 
-router.get('/contacts/:contactId', ctrlWrapper(getContactByIdController));
+// Отримати контакт по id
+router.get('/:id', getContactByIdController);
 
 export default router;

@@ -1,9 +1,16 @@
-import { initMongoConnection } from './db/initMongoConnection.js';
-import { setupServer } from './server.js';
+import express from 'express';
+import contactsRouter from './routers/contacts.js';
 
-const bootstrap = async () => {
-  await initMongoConnection();
-  setupServer();
-};
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-bootstrap();
+// Вбудований middleware для роботи з JSON
+app.use(express.json());
+
+// Всі маршрути для контактів
+app.use('/api/contacts', contactsRouter);
+
+// Запуск сервера
+app.listen(PORT, () => {
+  console.log(`✅ Сервер працює на http://localhost:${PORT}`);
+});
