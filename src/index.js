@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config(); // обов'язково на самому верху
+
 import { initMongoConnection } from './db/initMongoConnection.js';
 import { setupServer } from './server.js';
 
