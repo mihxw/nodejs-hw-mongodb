@@ -1,6 +1,3 @@
-import "dotenv/config";
-// // Щоб зчитувати та використовувати змінні оточення в додатку, потрібно буде встановити пакет dotenv 
-
 import dotenv from 'dotenv';
 dotenv.config();
 

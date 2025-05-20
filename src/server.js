@@ -12,26 +12,18 @@ export const setupServer = async () => {
 
   app.use(express.json());
   app.use(cors());
-
-  // app.use(
-  //   pino({
-  //     transport: {
-  //       target: 'pino-pretty',
-  //     },
-  //   }),
-  // );
+  app.use(pino());
 
   app.get('/', (req, res) => {
-    res.send('Server is work');
+    res.send('Сервер працює! 🟢');
   });
 
-  app.use(contactsRouter);
+  app.use('/contacts', contactsRouter);
 
   app.use(notFoundHandler);
-
   app.use(errorHandler);
 
   app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`✅ Сервер працює на http://localhost:${PORT}`);
   });
 };

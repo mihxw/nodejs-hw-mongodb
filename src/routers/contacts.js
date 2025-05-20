@@ -1,15 +1,12 @@
 import express from 'express';
 import {
   getAllContactsController,
-  getContactByIdController
-} from '../controllers/contacts.js'; // Імпортуємо функції контролерів
+  getContactByIdController,
+} from '../controllers/contactsController.js';
 
 const router = express.Router();
 
-// Отримати всі контакти
 router.get('/', getAllContactsController);
-
-// Отримати контакт по id
-router.get('/:id', getContactByIdController);
+router.get('/:contactId', getContactByIdController);
 
 export default router;
