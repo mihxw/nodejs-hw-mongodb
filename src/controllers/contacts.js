@@ -1,5 +1,7 @@
 import createHttpError from 'http-errors';
 import { getAllContacts, getContactById } from '../services/contacts.js';
+import mongoose from 'mongoose';
+
 
 export const getAllContactsController = async (req, res, next) => {
   try {
@@ -32,3 +34,5 @@ export const getContactByIdController = async (req, res, next) => {
     next(error);
   }
 };
+
+console.log('Mongoose connection state:', mongoose.connection.readyState);
