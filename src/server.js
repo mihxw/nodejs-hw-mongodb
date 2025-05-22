@@ -15,7 +15,7 @@ export const setupServer = () => {
     res.send('Сервер працює! 🟢');
   });
 
-  app.use('/api/contacts', contactsRouter);
+  app.use('/contacts', contactsRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
