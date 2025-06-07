@@ -1,25 +1,16 @@
-const parseSortBy = (value) => {
-  if (typeof value === 'undefined') {
-    return 'name';
-  }
-  const keys = ['id', 'name', 'createdAt'];
-  if (keys.includes(value) === true) {
-    return 'name';
-  }
-  return value;
-};
-const parseSortOrder = (value) => {
-  if (typeof value === 'undefined') {
-    return 'asc';
-  }
-  if (value !== 'asc' && value !== 'desc') {
-    return 'asc';
-  }
-  return value;
-};
-export const parseSortParams = (query) => {
-  const { sortBy, sortOrder } = query;
-  const parsedSortBy = parseSortBy(sortBy);
-  const parsedSortOrder = parseSortOrder(sortOrder);
-  return { sortBy: parsedSortBy, sortOrder: parsedSortOrder };
+import { sortList } from '../constants/index.js';
+
+export const parseSortParams = ({ sortBy = 'name', sortOrder }, sortFields) => {
+  const parsedSortOrder =
+    Array.isArray(sortList) && sortList.includes(sortOrder?.toLowerCase())
+      ? sortOrder.toLowerCase()
+      : sortList[0];
+
+  const parsedSortBy =
+    Array.isArray(sortFields) && sortFields.includes(sortBy) ? sortBy : 'name';
+
+  return {
+    sortBy: parsedSortBy,
+    sortOrder: parsedSortOrder,
+  };
 };
