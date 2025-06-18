@@ -1,5 +1,3 @@
-export const notFoundHandler = (req, res) => {
-  res.status(404).json({
-    message: `${req.url} not found`,
-  });
+export const notFoundHandler = async (req, res, next) => {
+  res.status(404).json({ status: 404, message: 'Not found', data: {} });
 };

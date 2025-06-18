@@ -1,56 +1,38 @@
-// import jwt from 'jsonwebtoken';
-// import createHttpError from 'http-errors';
-// import { User } from '../db/models/User.js';
-
-// export const authMiddleware = async (req, res, next) => {
-//   try {
-//     const authHeader = req.headers.authorization || '';
-//     const [type, token] = authHeader.split(' ');
-
-//     if (type !== 'Bearer' || !token) {
-//       throw createHttpError(401, 'Not authorized');
-//     }
-
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//     const user = await User.findById(decoded.id);
-
-//     if (!user) {
-//       throw createHttpError(401, 'User not found');
-//     }
-
-//     req.user = user; // <--- ось тут додається req.user
-//     next();
-//   } catch (error) {
-//     next(createHttpError(401, 'Invalid token'));
-//   }
-// };
-// import jwt from 'jsonwebtoken';
 import createHttpError from 'http-errors';
-import { findSession, findUserById } from '../services/auth.js';
-// import { User } from '../db/models/User.js';
 
+import { SessionAuth } from '../db/models/session.js';
+import { User } from '../db/models/auth.js';
 
 export const authenticate = async (req, res, next) => {
-  const { authorization } = req.headers;
-  if (!authorization) {
+  const authHeader = req.get('Authorization');
+  if (!authHeader) {
+    return next(createHttpError(401, 'Please provide Authorization header'));
+  }
+
+  const bearer = authHeader.split(' ')[0];
+  const token = authHeader.split(' ')[1];
+
+  if (bearer !== 'Bearer' || !token) {
+    return next(createHttpError(401, 'Auth header should be of type Bearer'));
+  }
+
+  const session = await SessionAuth.findOne({ accessToken: token });
+
+  if (!session) {
+    return next(createHttpError(401, 'Session not found'));
+  }
+
+  const isAccessTokenExpired =
+    new Date() > new Date(session.accessTokenValidUntil);
+
+  if (isAccessTokenExpired) {
     return next(createHttpError(401, 'Access token expired'));
   }
 
-  const [bearer, accessToken] = authorization.split(' ');
-  if (bearer !== 'Bearer') {
-    return next(createHttpError(401, 'Header must have type Bearer'));
-  }
-  const session = await findSession({ accessToken });
-  if (!session) {
-    return next(createHttpError(401, 'Session not fount'));
-  }
-  if (session.accessTokenValidUntil < Date.now) {
-    return next(createHttpError(401, 'Access token expired'));
-  }
-  const user = await findUserById({ _id: session.userId });
-  
+  const user = await User.findById(session.userId);
+
   if (!user) {
-    return next(createHttpError(401, 'User not found'));
+    return next(createHttpError(401));
   }
   req.user = user;
   next();

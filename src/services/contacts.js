@@ -1,101 +1,67 @@
-// import mongoose from 'mongoose';
-import ContactCollection from '../db/models/contact.js';
-import { calcPaginationData } from '../utils/calcPaginationData.js';
-import { typeList } from '../constants/contacts.js';
+import mongoose from 'mongoose';
 
-export const getContacts = async ({
-  page = 1,
-  perPage = 10,
-  sortBy = 'name',
-  sortOrder = 'asc',
-  query = {},
-}) => {
-  console.log('Final query before passing:', query);
+import { contactCollection } from '../db/models/contacts.js';
 
-  const filter = {};
-
-  console.log('MongoDB query before filter processing:', query);
-
-  if (query.userId) {
-    filter.userId = query.userId;
-  }
-
-  if (query.contactType && typeList.includes(query.contactType)) {
-    filter.contactType = query.contactType;
-  }
-
-  if (query.isFavourite !== undefined) {
-    filter.isFavourite = query.isFavourite;
-  }
-  console.log('Final MongoDB Query Filter before search:', query);
-  console.log('Final MongoDB Query Filter:', filter);
-
-  const skip = (page - 1) * perPage;
-  const sortOptions = { [sortBy]: sortOrder === 'desc' ? -1 : 1 };
-
-  console.log('Final MongoDB Sort Options:', sortOptions);
-
-  const totalItems = await ContactCollection.countDocuments(filter);
-
-  console.log('MongoDB Filter Applied:', filter);
-  console.log('Filter passed to MongoDB:', filter);
-  console.log('Final MongoDB Query Filter before search:', filter);
-  console.log('Filter before applying to MongoDB:', filter);
-  console.log('Final Filter before MongoDB query:', filter);
-  console.log('Filter before MongoDB query:', filter);
-
-  console.log('Final Filter before MongoDB query:', filter);
-
-  const data = await ContactCollection.find(filter)
-    .sort(sortOptions)
-    .skip(skip)
-    .limit(perPage);
-
-  const paginationData = calcPaginationData({ page, perPage, totalItems });
-
-  return {
-    data,
-    totalItems,
-    ...paginationData,
-  };
-};
-
-export const getContact = (contactId, userId) => {
-  return ContactCollection.findOne({ _id: contactId, userId });
-};
-
-export const addContact = (payload) => {
-  return ContactCollection.create(payload);
-};
-
-export const upsertContact = async (
-  contactId,
+export const getAllContact = async (
+  page,
+  perPage,
+  sortBy,
+  sortOrder,
   userId,
-  payload,
-  option = {},
 ) => {
-  const { upsert } = option;
-  const updatedContact = await ContactCollection.findOneAndUpdate(
-    { _id: contactId, userId },
-    payload,
-    { new: true, upsert },
-  );
+  const filter = { userId };
 
-  if (!updatedContact) return null;
+  const skip = page > 0 ? (page - 1) * perPage : 0;
+  const [total, contacts] = await Promise.all([
+    contactCollection.countDocuments(filter),
+    contactCollection
+      .find(filter)
+      .sort([[sortBy, sortOrder]])
+      .skip(skip)
+      .limit(perPage),
+  ]);
+  const totalPages = Math.ceil(total / perPage);
 
   return {
-    data: updatedContact,
-    isNew: upsert && !updatedContact._id.equals(contactId),
+    data: contacts,
+    page,
+    perPage,
+    totalItems: total,
+    totalPages,
+    hasPreviousPage: page > 1,
+    hasNextPage: totalPages > page,
   };
 };
 
-export const updateContactById = async (contactId, userId, payload) => {
-  return ContactCollection.findOneAndUpdate(
-    { _id: contactId, userId },
-    payload,
-    { new: true },
-  );
+export const getContactById = (contactId, userId) => {
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    return null;
+  }
+  return contactCollection.findOne({ _id: contactId, userId });
 };
 
-export const deleteContactById = async (contactId, userId) =>
-  ContactCollection.findOneAndDelete({ _id: contactId, userId });
+export const createContact = async (payload) => {
+  const contact = await contactCollection.create(payload);
+  return contact;
+};
+export const updateContact = async (contactId, payload, userId, photo) => {
+  const updateContact = await contactCollection.findOneAndUpdate(
+    { _id: contactId, userId },
+    { ...payload, photo },
+    {
+      new: true,
+    },
+  );
+  if (!updateContact) return null;
+  return {
+    contact: updateContact,
+    isNew: false,
+  };
+};
+export const deleteContact = async (contactId, userId) => {
+  const contactForDelete = await contactCollection.findOneAndDelete({
+    _id: contactId,
+    userId,
+  });
+  return contactForDelete;
+};
