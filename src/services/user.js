@@ -9,7 +9,7 @@ import {
   ONE_DAY,
   TEMPLATES_DIR,
 } from '../constants/constants.js';
-import { SessionAuth } from '../db/models/session.js';
+import { SessionAuth } from '../db/models/Session.js';
 
 import { sendEmail } from '../utils/sendEmail.js';
 import { getEnvWar } from '../utils/getEnv.js';
