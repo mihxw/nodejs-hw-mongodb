@@ -1,31 +1,40 @@
+import path from 'node:path';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
-import contactRouter from './routes/contacts.js';
-import contactAuthRouter from './routes/auth.js';
-import { getAllContact, getContactById } from './services/contacts.js';
-import { errorHandler } from './middlewares/errorHandler.js';
-import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import { getEnvVar } from './utils/getEnvVar.js';
+import { errorHandler, notFoundHandler } from './middlewares/errorHandler.js';
+import router from './routers/index.js';
 
-const PORT = Number(process.env.PORT);
+const PORT = Number(getEnvVar('PORT', '8080'));
 
-export const setupServer = () => {
-  const app = express();
+const app = express();
 
-  app.use(express.json());
+app.use(
+  '/avatars',
+  express.static(path.resolve('src', 'uploads', 'avatars'))
+);
 
-  app.use(cors());
-  app.use(cookieParser());
-  app.use('/auth', contactAuthRouter);
+app.use(express.json());
+app.use(cors());
+app.use(cookieParser());
 
-  app.use('/contacts', contactRouter);
+// Логування запитів — щоб дебаг було легше
+app.use((req, res, next) => {
+  console.log(`Incoming request: ${req.method} ${req.url}`);
+  next();
+});
 
-  app.use(notFoundHandler);
+app.get('/', (req, res) => {
+  res.send('Server is working');
+});
 
-  app.use(errorHandler);
+app.use(router);
 
-  app.listen(PORT, (req, res) => {
-    console.log(`Server is running on port ${PORT}`);
-  });
-};
+app.use(notFoundHandler);
+app.use(errorHandler);
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import { model, Schema } from 'mongoose';
+import mongoose, { model, Schema } from 'mongoose';
+
 const contactsSchema = new Schema(
   {
     name: {
@@ -12,34 +12,32 @@ const contactsSchema = new Schema(
     },
     email: {
       type: String,
+      required: false,
     },
     isFavourite: {
       type: Boolean,
+      required: true,
       default: false,
     },
     contactType: {
       type: String,
-      enum: ['work', 'home', 'personal'],
       required: true,
+      enum: ['work', 'home', 'personal'],
       default: 'personal',
-    },
-    photo: {
-      type: String,
-      default: '',
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
       required: true,
     },
+    photo: {
+      type: String,
+      default: null,
+      required: false,
+    },
   },
-
   {
     timestamps: true,
-    versionKey: false,
   },
 );
-contactsSchema.set('toJSON', {
-  versionKey: false,
-});
-export const contactCollection = model('contact', contactsSchema);
+
+export const ContactsCollection = model('contacts', contactsSchema);
