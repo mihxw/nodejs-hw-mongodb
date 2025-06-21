@@ -4,11 +4,11 @@ import {
   logoutUser,
   refreshUsersSession,
   registerUser,
-  sendResetPassword,
   resetPassword,
+  sendResetPassword,
 } from '../servis/auth.js';
 
-export const userRegisterController = async (req, res) => {
+export const registerUserController = async (req, res) => {
   const user = await registerUser(req.body);
 
   res.status(201).json({
@@ -18,7 +18,7 @@ export const userRegisterController = async (req, res) => {
   });
 };
 
-export const userLogInController = async (req, res) => {
+export const loginUserController = async (req, res) => {
   const session = await loginUser(req.body);
 
   res.cookie('refreshToken', session.refreshToken, {
@@ -30,16 +30,16 @@ export const userLogInController = async (req, res) => {
     expires: new Date(Date.now() + ONE_DAY),
   });
 
-  res.status(200).json({
+  res.status(201).json({
     status: 200,
-    message: 'Successfully logged in a user!',
+    message: 'Successfully logged in an user!',
     data: {
       accessToken: session.accessToken,
     },
   });
 };
 
-export const userLogOutController = async (req, res) => {
+export const logoutUserController = async (req, res) => {
   const { sessionId, refreshToken } = req.cookies;
   if (typeof sessionId === 'string') await logoutUser(sessionId, refreshToken);
 
@@ -60,7 +60,7 @@ const setupSession = (res, session) => {
   });
 };
 
-export const refreshController = async (req, res) => {
+export const refreshSessionuserController = async (req, res) => {
   const { sessionId, refreshToken } = req.cookies;
   const session = await refreshUsersSession(sessionId, refreshToken);
 
@@ -75,7 +75,7 @@ export const refreshController = async (req, res) => {
   });
 };
 
-export const requestResetEmailController = async (req, res) => {
+export const sendResetPasswordController = async (req, res) => {
   const { email } = req.body;
 
   await sendResetPassword(email);
@@ -86,13 +86,9 @@ export const requestResetEmailController = async (req, res) => {
   });
 };
 
-export const requestResetPasswordController = async (req, res) => {
-  // Якщо окремо потрібен — можеш додати логіку, або забрати цей контролер, якщо він дублює sendResetPassword
-  res.status(501).json({ message: 'Not implemented' });
-};
-
-export const resetPasswordController = async (req, res) => {
+export const resetPassworsController = async (req, res) => {
   const { password, token } = req.body;
+  console.log(req.body);
 
   await resetPassword(password, token);
 

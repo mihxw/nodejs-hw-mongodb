@@ -1,56 +1,55 @@
-import { Router } from 'express';
+import express from 'express';
+import { validateBody } from '../middlewares/validateBody.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import {
-  userRegisterController,
-  userLogInController,
-  userLogOutController,
-  refreshController,
-  requestResetEmailController,
-  resetPasswordController,
+  loginUserController,
+  logoutUserController,
+  refreshSessionuserController,
+  registerUserController,
+  resetPassworsController,
+  sendResetPasswordController,
 } from '../controllers/auth.js';
-
-import { validateBody } from '../middlewares/validateBody.js';
 import {
   loginUserSchema,
   registerUserSchema,
-  sendResetPasswordSchema,
-  resetPasswordSchema,
+  resetPassworsSchema,
+  sendResetPassword,
 } from '../validation/auth.js';
 
-const router = Router();
+const router = express.Router();
+
+const jsonParser = express.json();
 
 router.post(
   '/register',
+  jsonParser,
   validateBody(registerUserSchema),
-  ctrlWrapper(userRegisterController)
+  ctrlWrapper(registerUserController),
 );
 
 router.post(
   '/login',
+  jsonParser,
   validateBody(loginUserSchema),
-  ctrlWrapper(userLogInController)
+  ctrlWrapper(loginUserController),
 );
 
-router.post('/refresh', ctrlWrapper(refreshController));
+router.post('/logout', ctrlWrapper(logoutUserController));
 
-router.post('/logout', ctrlWrapper(userLogOutController));
+router.post('/refresh', ctrlWrapper(refreshSessionuserController));
 
 router.post(
   '/send-reset-email',
-  validateBody(sendResetPasswordSchema),
-  ctrlWrapper(requestResetEmailController)
+  jsonParser,
+  validateBody(sendResetPassword),
+  ctrlWrapper(sendResetPasswordController),
 );
 
 router.post(
   '/reset-pwd',
-  validateBody(resetPasswordSchema),
-  ctrlWrapper(resetPasswordController)
+  jsonParser,
+  validateBody(resetPassworsSchema),
+  ctrlWrapper(resetPassworsController),
 );
-
-router.use((req, res, next) => {
-  console.log('Auth router hit:', req.method, req.url);
-  next();
-});
-
 
 export default router;
