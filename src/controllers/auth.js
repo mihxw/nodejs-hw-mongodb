@@ -1,5 +1,6 @@
 import { ONE_DAY } from '../constants/index.js';
 import {
+  loginOrRegister,
   loginUser,
   logoutUser,
   refreshUsersSession,
@@ -7,6 +8,18 @@ import {
   resetPassword,
   sendResetPassword,
 } from '../servis/auth.js';
+import { getOAuthURL, validateCode } from '../utils/googleOauth.js';
+
+const setupSession = (res, session) => {
+  res.cookie('refreshToken', session.refreshToken, {
+    httpOnly: true,
+    expires: new Date(Date.now() + ONE_DAY),
+  });
+  res.cookie('sessionId', session._id, {
+    httpOnly: true,
+    expires: new Date(Date.now() + ONE_DAY),
+  });
+};
 
 export const registerUserController = async (req, res) => {
   const user = await registerUser(req.body);
@@ -21,14 +34,7 @@ export const registerUserController = async (req, res) => {
 export const loginUserController = async (req, res) => {
   const session = await loginUser(req.body);
 
-  res.cookie('refreshToken', session.refreshToken, {
-    httpOnly: true,
-    expires: new Date(Date.now() + ONE_DAY),
-  });
-  res.cookie('sessionId', session._id, {
-    httpOnly: true,
-    expires: new Date(Date.now() + ONE_DAY),
-  });
+  setupSession(res, session);
 
   res.status(201).json({
     status: 200,
@@ -47,17 +53,6 @@ export const logoutUserController = async (req, res) => {
   res.clearCookie('refreshToken');
 
   res.status(204).end();
-};
-
-const setupSession = (res, session) => {
-  res.cookie('refreshToken', session.refreshToken, {
-    httpOnly: true,
-    expires: new Date(Date.now() + ONE_DAY),
-  });
-  res.cookie('sessionId', session._id, {
-    httpOnly: true,
-    expires: new Date(Date.now() + ONE_DAY),
-  });
 };
 
 export const refreshSessionuserController = async (req, res) => {
@@ -98,3 +93,34 @@ export const resetPassworsController = async (req, res) => {
     data: {},
   });
 };
+
+export function getOauthController(req, res) {
+  const url = getOAuthURL();
+
+  res.json({
+    status: 200,
+    message: 'Successfully get url',
+    data: {
+      oauth_url: url,
+    },
+  });
+}
+
+export async function confirmOAuthSchemaController(req, res) {
+  const ticket = await validateCode(req.body.code);
+
+  const session = await loginOrRegister(
+    ticket.payload.email,
+    ticket.payload.name,
+  );
+
+  setupSession(res, session);
+
+  res.json({
+    status: 200,
+    message: 'Login with Google successfully',
+    data: {
+      accessToken: session.accessToken,
+    },
+  });
+}

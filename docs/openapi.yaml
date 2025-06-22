@@ -1,0 +1,41 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: hw7-swagger
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: Домашня робота №7
+tags:
+  - name: Contacts
+    description: Operation with contact
+
+paths:
+  /contacts:
+    get:
+      $ref: '../swagger/path/contacts/getAll.yaml'
+    post:
+      $ref: '../swagger/path/contacts/post.yaml'
+  /contacts/{id}:
+    get:
+      $ref: '../swagger/path/contacts/{id}/get.yaml'
+    delete:
+      $ref: '../swagger/path/contacts/{id}/delete.yaml'
+    patch:
+      $ref: '../swagger/path/contacts/{id}/patch.yaml'
+  /auth/register:
+    post:
+      $ref: ../swagger/path/auth/register.yaml
+  /auth/login:
+    post:
+      $ref: ../swagger/path/auth/login.yaml
+  /auth/logout:
+    post:
+      $ref: ../swagger/path/auth/logout.yaml
+servers:
+  - url: https://hw7-swagger-08wu.onrender.com
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer  

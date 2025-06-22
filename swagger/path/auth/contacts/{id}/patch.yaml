@@ -1,0 +1,94 @@
+tags:
+  - Contacts
+summary: Update contacts
+operationId: updateContact
+description: Update contacts
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: string
+      example: 6841738d9abba11274e4c270
+requestBody:
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+            description: Contact name
+            example: Nejk dima
+          phoneNumber:
+            type: string
+            description: Phone contact
+            example: +3802341230
+          email:
+            type: string
+            description: Email contact
+            example: doe@mail.com
+          isFavourite:
+            type: boolean
+            description: Contact favourite
+            example: false
+          contactType:
+            type: string
+            description: Contact type
+            enum: ['work', 'home', 'personal']
+            example: personal
+          photo:
+            type: string
+            format: url
+            description: Contact photo url
+            example: https://res.cloudinary.com/df5xsxnzm/image/upload/v1749232498/jpolliyga4egrctz965w.jpg
+
+responses:
+  '200':
+    description: Contact not update
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Contact not update
+            data:
+              $ref: ../../../conponents/schemas/contact.yaml
+  '201':
+    description: Contact update
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: Contact update
+            data:
+              $ref: ../../../conponents/schemas/contact.yaml
+  '401':
+    $ref: ../../../conponents/responses/401.yaml
+
+  '404':
+    $ref: ../../../conponents/responses/404.yaml
+
+  '500':
+    $ref: ../../../conponents/responses/500.yaml

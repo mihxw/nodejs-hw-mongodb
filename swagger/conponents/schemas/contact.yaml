@@ -1,0 +1,51 @@
+type: object
+required:
+  - _id
+  - name
+  - phoneNumber
+  - email
+  - isFavourite
+  - contactType
+  - userId
+  - photo
+  - timestamps
+properties:
+  _id:
+    type: string
+    description: Contact id
+    example: 6841738d9abba11274e4c270
+  name:
+    type: string
+    description: Contact name
+    example: Nejk dima
+  phoneNumber:
+    type: string
+    description: Phone contact
+    example: +3802341230
+  email:
+    type: string
+    description: Email contact
+    example: doe@mail.com
+  isFavourite:
+    type: boolean
+    description: Contact favourite
+    example: false
+  contactType:
+    type: string
+    description: Contact type
+    enum: ['work', 'home', 'personal']
+    example: personal
+  userId:
+    type: string
+    description: Contact userId
+    example: 684173599abba11274e4c268
+  photo:
+    type: string
+    format: url
+    description: Contact photo url
+    example: https://res.cloudinary.com/df5xsxnzm/image/upload/v1749232498/jpolliyga4egrctz965w.jpg
+  timestamps:
+    type: object
+    format: date-time
+    description: Contact created
+    example: 2025-06-06T17:54:59.164+00:00 2025-06-06T17:54:59.164+00:00

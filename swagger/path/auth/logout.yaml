@@ -1,0 +1,13 @@
+tags:
+  - Auth
+summary: Logout user
+operationId: logoutUser
+description: logout user
+security: []
+responses:
+  '204':
+    description: User logout
+  '404':
+    $ref: ../../conponents/responses/404.yaml
+  '500':
+    $ref: ../../conponents/responses/500.yaml
