@@ -32,8 +32,6 @@ paths:
   /auth/logout:
     post:
       $ref: ../swagger/path/auth/logout.yaml
-servers:
-  - url: https://nodejs-hw-mongodb-53-a4ux.onrender.com
 components:
   securitySchemes:
     bearerAuth:
