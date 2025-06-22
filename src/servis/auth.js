@@ -7,7 +7,7 @@ import { randomBytes } from 'crypto';
 import jwt from 'jsonwebtoken';
 
 import { UserCollection } from '../models/user.js';
-import { SessionCollection } from '../models/session.js';
+import { SessionCollection } from '../models/Session.js';
 import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/index.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
 import { sendMail } from '../utils/sendMail.js';

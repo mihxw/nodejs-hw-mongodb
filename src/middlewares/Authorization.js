@@ -1,5 +1,5 @@
 import createHttpError from 'http-errors';
-import { SessionCollection } from '../models/session.js';
+import { SessionCollection } from '../models/Session.js';
 import { UserCollection } from '../models/user.js';
 
 // import { SessionsCollection } from '../db/models/session.js';
