@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "version": "1.0.0",
-    "title": "hw7-swagger",
+    "title": "mongo-db",
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -11,7 +11,7 @@
   },
   "servers": [
     {
-      "url": "https://hw7-swagger-08wu.onrender.com"
+      "url": "https://nodejs-hw-mongodb-54-7f9n.onrender.com"
     }
   ],
   "tags": [
