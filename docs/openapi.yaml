@@ -33,7 +33,7 @@ paths:
     post:
       $ref: ../swagger/path/auth/logout.yaml
 servers:
-  - url: https://hw7-swagger-08wu.onrender.com
+  - url: https://nodejs-hw-mongodb-53-a4ux.onrender.com
 components:
   securitySchemes:
     bearerAuth:
